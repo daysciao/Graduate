@@ -1,20 +1,18 @@
-# -*- coding: utf-8 -*-
-
 import time
 import numpy as np
 
 toponet = np.array([[0,2,1,100,100,100],
-            [2,0,2,3,4,100],
-                [1,2,0,100,3,100],
-            [100,3,100,0,2,5],
-                [100,4,3,2,0,2],
-            [100,100,100,5,2,0]])
+                    [2,0,2,3,4,100],
+                    [1,2,0,100,3,100],
+                    [100,3,100,0,2,5],
+                    [100,4,3,2,0,2],
+                    [100,100,100,5,2,0]])
 
-CROSS_RATE = 0.2
-MUTATE_RATE = 0.01
+CROSS_RATE = 0.4
+MUTATE_RATE = 0
 POP_SIZE = 50
-N_GENERATIONS = 50
-DNA_size = np.shape(toponet)[0]
+N_GENERATIONS = 25
+DNA_size = np.shape(toponet)[0] - 2
 
     
 class GA(object):
@@ -23,29 +21,30 @@ class GA(object):
         self.cross_rate = cross_rate
         self.mutate_rate = mutation_rate
         self.pop_size = pop_size
-        self.pop = np.vstack([np.random.permutation(DNA_size) for _ in range(pop_size)])
+        bound = np.arange(DNA_size + 2)
+        bound = bound[bound != route_source]
+        bound = bound[bound != route_destination]
+        self.bound = bound
+        self.pop = np.vstack([np.random.permutation(bound) for _ in range(pop_size)])
         self.src = route_source
         self.des = route_destination
-    
-    def get_distance(self, net):
-        distance = np.zeros(self.pop_size, dtype=np.int)
-        jump = self.DNA_size - 1
-        for i, route in enumerate(self.pop):
+        
+    def get_fitness(self, net):
+        s = np.ones(self.pop_size, np.int).reshape(self.pop_size, 1) * self.src
+        d = np.ones(self.pop_size, np.int).reshape(self.pop_size, 1) * self.des
+        fitness = np.zeros(self.pop_size, dtype=np.int)
+        routes = np.c_[s, self.pop, d]
+        jump = self.DNA_size + 1
+        for i, route in enumerate(routes):
             for k in range(jump):
-                distance[i] += net[route[k]][route[k+1]]
-        return distance
-    
-    def get_fitness(self, distance):
-        target = np.zeros(self.pop_size, dtype=np.int)
-        for i, route in enumerate(self.pop):
-            if route[0] == self.src and route[-1] == self.des:
-                target[i] = 10
-        fitness = (1000 - distance) * target
+                fitness[i] += net[route[k]][route[k+1]]
         return fitness
     
     def select(self):
-        
-        idx = np.random.choice(np.arange(self.pop_size), size=self.pop_size, replace=True, p=fitness/fitness.sum())
+        team = np.random.choice(np.arange(self.pop_size), size=2*self.pop_size, replace=True).reshape(2, -1)
+        game = fitness[team]
+        compete = np.argmin(game, axis=0)
+        idx = np.choose(compete, team)
         return self.pop[idx]
         
         
@@ -59,7 +58,7 @@ class GA(object):
     def mutate(self, child):
         for point in range(self.DNA_size):
             if np.random.rand() < self.mutate_rate:
-                child[point] = np.random.randint(self.DNA_size)
+                child[point] = np.random.randint(self.DNA_size + 2)
         return child
 
     def evolve(self):
@@ -79,12 +78,11 @@ if __name__ == '__main__':
     ga = GA(DNA_size=DNA_size, cross_rate=CROSS_RATE, mutation_rate=MUTATE_RATE, pop_size=POP_SIZE, route_source=0, route_destination=5)
 
     for generation in range(N_GENERATIONS):
-        distance = ga.get_distance(toponet)
-        fitness = ga.get_fitness(distance)
-        idx = np.argmax(fitness)
+        fitness = ga.get_fitness(toponet)
+        idx = np.argmin(fitness)
         best_path = ga.pop[idx]
-        shortest_path = distance[idx]
-        print 'Gen', generation, ': ', best_path, 'Shortest Distance: ',shortest_path
+        shortest_path = fitness[idx]
+        print 'Gen', generation, ': ', best_path, 'Shortest Distance: ', shortest_path
         ga.evolve()
 
     end = time.clock()
