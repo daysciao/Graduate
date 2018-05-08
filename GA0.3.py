@@ -9,9 +9,9 @@ toponet = np.array([[0,2,1,100,100,100],
                     [100,100,100,5,2,0]])
 
 CROSS_RATE = 0.4
-MUTATE_RATE = 0
-POP_SIZE = 50
-N_GENERATIONS = 25
+MUTATE_RATE = 0.1
+POP_SIZE = 100
+N_GENERATIONS = 20
 DNA_size = np.shape(toponet)[0] - 2
 
     
