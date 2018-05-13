@@ -3,19 +3,19 @@
 import time
 import numpy as np
 
-toponet = np.array([[0,2,1,100,100,100],
-                    [2,0,2,3,4,100],
-                    [1,2,0,100,3,100],
-                    [100,3,100,0,2,5],
-                    [100,4,3,2,0,2],
-                    [100,100,100,5,2,0]])
+toponet = np.array([[0,1,1,100,100,100],
+                    [1,0,1,1,1,100],
+                    [1,1,0,100,1,100],
+                    [100,1,100,0,1,1],
+                    [100,1,1,1,0,1],
+                    [100,100,100,1,1,0]])
 
-ANT_NUM = 40 #蚂蚁个数  
+ANT_NUM = 12 #蚂蚁个数  
 NODE_NUM = toponet.shape[0] #节点个数
 PHEROMONE_MAX = 0.9
 PHEROMONE_MIN = 0.1
 RHO = 0.9   #信息素的挥发速度
-N_GENERATIONS = 20
+N_GENERATIONS = 5
 GA_route = np.array([0, 1, 1, 4, 4, 5])
 Q = 12
 
@@ -97,7 +97,7 @@ if __name__ == '__main__':
 
     for generation in range(N_GENERATIONS):
         ant_system.sys_work()
-        print 'Gen', generation, ': ', ant_system.path, 'Shortest Distance: ', ant_system.path_lenth
-
+        
+    print 'Gen', generation, ': ', ant_system.path, 'Shortest Distance: ', ant_system.path_lenth
     end = time.clock()
     print(end - start)   

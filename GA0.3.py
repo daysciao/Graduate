@@ -10,8 +10,8 @@ toponet = np.array([[0,2,1,100,100,100],
 
 CROSS_RATE = 0.4
 MUTATE_RATE = 0.1
-POP_SIZE = 100
-N_GENERATIONS = 20
+POP_SIZE = 50
+N_GENERATIONS = 50
 DNA_size = np.shape(toponet)[0] - 2
 
     
@@ -82,8 +82,7 @@ if __name__ == '__main__':
         idx = np.argmin(fitness)
         best_path = ga.pop[idx]
         shortest_path = fitness[idx]
-        print 'Gen', generation, ': ', best_path, 'Shortest Distance: ', shortest_path
         ga.evolve()
-
+    print 'Gen', generation, ': ', best_path, 'Shortest Distance: ', shortest_path
     end = time.clock()
     print(end - start)
