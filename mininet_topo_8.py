@@ -9,8 +9,9 @@ class MyTopo(Topo):
         
         node_num = 8
         hostConfig = {'cpu':cpu}
-        linkConfig = {'bw':10,'delay':'10ms',loss:0,'max_queue_size':max_queue_size}
+        linkConfig = {'bw':10,'delay':'10ms','loss':0,'max_queue_size':max_queue_size}
         
+        nodes = (0, 1, 2, 3, 4, 5, 6, 7)
         edges = [(0, 3), (0, 5), (0, 7), (1, 3), (1, 4), 
                  (2, 3), (2, 4), (2, 5), (3, 4), (3, 6), 
                  (3, 7), (4, 5), (4, 6), (4, 7), (5, 6)]
@@ -20,7 +21,7 @@ class MyTopo(Topo):
         h2 = self.addHost('h2',**hostConfig)
         
         # add switchs
-        for node in range(node_num):
+        for node in nodes:
             self.addSwitch(node)
             
         # add links
