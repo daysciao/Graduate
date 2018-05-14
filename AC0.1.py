@@ -3,12 +3,14 @@
 import time
 import numpy as np
 
-toponet = np.array([[0,1,1,100,100,100],
-                    [1,0,1,1,1,100],
-                    [1,1,0,100,1,100],
-                    [100,1,100,0,1,1],
-                    [100,1,1,1,0,1],
-                    [100,100,100,1,1,0]])
+toponet = np.array([[0,100,1,1,1,1,100,1],
+                    [100,0,1,100,100,100,100,100],
+                    [1,1,0,1,1,1,100,100],
+                    [1,100,1,0,100,100,1,1],
+                    [1,100,1,100,0,100,1,100],
+                    [1,100,1,100,100,0,100,100],
+                    [100,100,100,1,1,100,0,100],
+                    [1,100,100,1,100,100,100,0]])
 
 ANT_NUM = 12 #蚂蚁个数  
 NODE_NUM = toponet.shape[0] #节点个数
@@ -16,7 +18,7 @@ PHEROMONE_MAX = 0.9
 PHEROMONE_MIN = 0.1
 RHO = 0.9   #信息素的挥发速度
 N_GENERATIONS = 5
-GA_route = np.array([0, 1, 1, 4, 4, 5])
+GA_route = np.array([0, 2, 2, 4, 4, 4, 4, 6])
 Q = 12
 
 class Ant(object):
@@ -92,7 +94,7 @@ class Ant(object):
 if __name__ == '__main__':
     start = time.clock()
     
-    ant_system = Ant(net=toponet, node_num=NODE_NUM, ant_num=ANT_NUM, p_max=PHEROMONE_MAX, p_min=PHEROMONE_MIN, route_source=0, route_destination=5, GA_route=GA_route)
+    ant_system = Ant(net=toponet, node_num=NODE_NUM, ant_num=ANT_NUM, p_max=PHEROMONE_MAX, p_min=PHEROMONE_MIN, route_source=0, route_destination=6, GA_route=GA_route)
 
 
     for generation in range(N_GENERATIONS):

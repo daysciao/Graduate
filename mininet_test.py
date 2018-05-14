@@ -6,10 +6,15 @@ class MyTopo( Topo ):
 
         # initilaize topology   
         Topo.__init__( self )
+        
+        hostConfig = {'cpu':cpu}
+        linkConfig = {'bw':10,'delay':'10ms',loss:0,'max_queue_size':max_queue_size}
 
         # add hosts and switches
-        host1 = self.addHost( 'h1' )
-        host2 = self.addHost( 'h2' )
+        host1 = self.addHost( 'h1' , **hostConfig)
+        host2 = self.addHost( 'h2' , **hostConfig)
+        
+        
         switch1 = self.addSwitch( 's1' )
         switch2 = self.addSwitch( 's2' )
         switch3 = self.addSwitch( 's3' )
