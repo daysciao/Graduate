@@ -2,10 +2,10 @@ from mininet.topo import Topo
 
 class MyTopo(Topo):
 
-    def __init__(self):
+    def __init__(self,cpu=1,max_queue_size=None,**params):
 
         # initilaize topology   
-        Topo.__init__(self)
+        Topo.__init__(self,**params)
         
         node_num = 8
         hostConfig = {'cpu':cpu}
