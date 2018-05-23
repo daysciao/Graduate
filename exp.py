@@ -26,7 +26,7 @@ from ryu.lib.packet import packet
 from ryu.lib.packet import ethernet
 from ryu.lib.packet import ether_types
 from ryu.lib import mac
-from ryu.topology.api import get_switch, get_link
+from ryu.topology.api import get_switch, get_link, get_host
 from ryu.app.wsgi import ControllerBase
 from ryu.topology import event, switches
 
@@ -71,7 +71,7 @@ class ProjectController(app_manager.RyuApp):
         print 'OFPSwitchFeatures received: datapath_id=0x%016x n_buffers=%d n_tables=%d auxiliary_id=%d capabilities=0x%08x' % (
             msg.datapath_id, msg.n_buffers, msg.n_tables, msg.auxiliary_id, msg.capabilities)
 
-        datapath = ev.msg.datapath
+        datapath = msg.datapath
         ofproto = datapath.ofproto
         parser = datapath.ofproto_parser
         match = parser.OFPMatch()
@@ -89,36 +89,30 @@ class ProjectController(app_manager.RyuApp):
 
         switch_list = get_switch(self.topology_api_app, None)
         switches = [switch.dp.id for switch in switch_list]
-        self.net.add_nodes_from(switches)
-
         print "-----------List of switches"
         for switch in switch_list:
-            self.ls(switch)
             print switch
-            # self.nodes[self.no_of_nodes] = switch
-            # self.no_of_nodes += 1
-
-        # -----------------------------
-        links_list = get_link(self.topology_api_app, None)
-        for link in links_list:
-            print link
-        print links_list
-        links = [(link.src.dpid, link.dst.dpid, {'port': link.src.port_no}) for link in links_list]
-        print links
-        self.net.add_edges_from(links)
-        links = [(link.dst.dpid, link.src.dpid, {'port': link.dst.port_no}) for link in links_list]
-        print links
-        self.net.add_edges_from(links)
+            
+        host_list = get_host(self.topology_api_app, None)
+        print "-----------List of hosts"
+        for host in host_list:
+            print host
+            
         print "-----------List of links"
-        print self.net.edges()
-
+        link_list = get_link(self.topology_api_app, None)
+        for link in link_list:
+            print link
+        
+        print switch_list, host_list, link_list
+        
+'''
         self.printG()
         # the spectral layout
         pos = nx.spectral_layout(G)
         # draw the regular graph
         nx.draw(G)
         plt.show()
-
+'''
 '''
     def add_flow(self, datapath, in_port, dst, actions):
         ofproto = datapath.ofproto
