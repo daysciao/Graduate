@@ -90,7 +90,7 @@ class ProjectController(app_manager.RyuApp):
         print "\n-----------get_topology_data"
         switch_list = get_switch(self.topology_api_app, None)
         self.dps = [switch.dp for switch in switch_list]
-        self.switch_es = self.dps.id
+        self.switch_es = [dp.id for dp in self.dps]
         node_num = len(self.switch_es)
         self.creat_access_table(node_num)
         links_list = get_link(self.topology_api_app, None)
@@ -166,8 +166,11 @@ class ProjectController(app_manager.RyuApp):
         parser = datapath.ofproto_parser
         pkt = packet.Packet(msg.data)
         eth_pkt = pkt.get_protocol(ethernet.ethernet)
+        print eth_pkt
         ip_pkt = pkt.get_protocol(ipv4.ipv4)
+        print ip_pkt
         arp_pkt = pkt.get_protocol(arp.arp)
+        print arp_pkt
         in_port = msg.match['in_port']
         
         if arp_pkt:
@@ -188,7 +191,7 @@ class ProjectController(app_manager.RyuApp):
         
         if (len(path)-1):
             out_port = self.access[ip_dst][1]
-        else
+        else:
             out_port = self.port_map[path[0]][path[1]][0]
         
         
@@ -198,4 +201,3 @@ class ProjectController(app_manager.RyuApp):
             datapath=datapath, buffer_id=msg.buffer_id, in_port=in_port,
             actions=actions)
         datapath.send_msg(out)
-'''
