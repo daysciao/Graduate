@@ -24,6 +24,7 @@ class MyTopo(Topo):
         # add hosts
         h1 = self.addHost('h1',**hostConfig)
         h2 = self.addHost('h2',**hostConfig)
+        h3 = self.addHost('h3',**hostConfig)
         
         # add switchs
         for i in range(node_num):
@@ -34,6 +35,7 @@ class MyTopo(Topo):
         
         self.addLink(h1,s[2],**linkConfig)
         self.addLink(h2,s[4],**linkConfig)
+        self.addLink(h2,s[6],**linkConfig)
         
         for v,w in edges:
             self.addLink(s[v],s[w],**linkConfig)
