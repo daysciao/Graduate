@@ -34,7 +34,7 @@ class ProjectController(app_manager.RyuApp):
         self.port_map = None
         self.toponet = None
         self.access = {}
-        self.host_pos = {8:[2,4,6]}
+        self.host_pos = {8:[1,3,5]}
         
         self.discover_thread = hub.spawn(self._discover)
     def _discover(self):
@@ -74,7 +74,7 @@ class ProjectController(app_manager.RyuApp):
             self.port_map[src_i][dst_i] = ports
                 
     def creat_access_table(self,node_num):
-        access_point = self.switch_es[self.host_pos[node_num]]
+        access_point = self.switch_es[self.host_pos[i] for i in range(3)]
         i = 0
         for point in access_point:
             i = i + 1
@@ -172,6 +172,9 @@ class ProjectController(app_manager.RyuApp):
         arp_pkt = pkt.get_protocol(arp.arp)
         print arp_pkt
         in_port = msg.match['in_port']
+        
+        if eth_pkt.ethertype == ether_types.ETH_TYPE_LLDP:
+            return
         
         if arp_pkt:
             self.arp_answer(datapath,arp_pkt,eth_pkt,in_port)
