@@ -121,7 +121,7 @@ class ProjectController(app_manager.RyuApp):
         actions = []
         
         if opcode == arp.ARP_REQUEST:
-            if arp_dst_ip in self.arp_table.keys():
+            if arp_dst_ip in self.ARP_table.keys():
                 actions.append(datapath.ofproto_parser.OFPActionOutput(in_port))
 
             ARP_Reply = packet.Packet()
@@ -159,6 +159,7 @@ class ProjectController(app_manager.RyuApp):
         out_port = self.access[ip_dst][1]
         actions = [datapath.ofproto_parser.OFPActionOutput(out_port)]
         self.add_flow(datapath, in_port, dst, actions)
+        print 'install_______________complete'
         
     @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
     def _packet_in_handler(self, ev):
@@ -176,34 +177,34 @@ class ProjectController(app_manager.RyuApp):
         print arp_pkt
         in_port = msg.match['in_port']
         
-        if eth_pkt.ethertype == ether_types.ETH_TYPE_LLDP:
-            return
-        
         if arp_pkt:
             self.arp_answer(datapath,arp_pkt,eth_pkt,in_port)
             return None
+            
+        if eth_pkt.ethertype == 2048:
+            
+            dst = eth_pkt.dst
+            src = eth_pkt.src
+            ip_dst = ip_pkt.dst
+            ip_src = ip_pkt.src
+            dpid = datapath.id
+        
+            src_i = self.switch_es.index(self.access[ip_src][0])
+            dst_i = self.switch_es.index(self.access[ip_dst][0])
+        
+            path = GA_routing(self.toponet,src_i,dst_i)
+            self.install_flow(path,in_port,dst,ip_dst)
+        
+            if (len(path)-1):
+                out_port = self.access[ip_dst][1]
+            else:
+                out_port = self.port_map[path[0]][path[1]][0]
+        
+        
+            actions = [datapath.ofproto_parser.OFPActionOutput(out_port)]
 
-        dst = eth_pkt.dst
-        src = eth_pkt.src
-        ip_dst = ip_pkt.dst
-        ip_src = ip_pkt.src
-        dpid = datapath.id
-        
-        src_i = self.switch_es.index(self.access[ip_src][0])
-        dst_i = self.switch_es.index(self.access[ip_dst][0])
-        
-        path = GA_routing(self.toponet,src_i,dst_i)
-        self.install_flow(path,in_port,dst,ip_dst)
-        
-        if (len(path)-1):
-            out_port = self.access[ip_dst][1]
-        else:
-            out_port = self.port_map[path[0]][path[1]][0]
-        
-        
-        actions = [datapath.ofproto_parser.OFPActionOutput(out_port)]
-
-        out = datapath.ofproto_parser.OFPPacketOut(
+            out = datapath.ofproto_parser.OFPPacketOut(
             datapath=datapath, buffer_id=msg.buffer_id, in_port=in_port,
             actions=actions)
-        datapath.send_msg(out)
+            datapath.send_msg(out)
+            print 'packet_______________complete'
