@@ -107,7 +107,7 @@ class ProjectController(app_manager.RyuApp):
         mod = datapath.ofproto_parser.OFPFlowMod(
             datapath=datapath, match=match, cookie=0,
             command=ofproto.OFPFC_ADD, idle_timeout=0, hard_timeout=0,
-            priority=ofproto.OFP_DEFAULT_PRIORITY, instructions=inst)
+            priority=1, instructions=inst)
         datapath.send_msg(mod)
         print datapath,'added',mod
         
@@ -153,7 +153,7 @@ class ProjectController(app_manager.RyuApp):
             dst_i = self.switch_es.index(self.access[ip_dst][0])
         
             path = GA_routing(self.toponet,src_i,dst_i)
-            self.install_flow(path,in_port,dst,ip_dst)
+            self.install_flow(path,in_port,dst,src,ip_dst)
             print dpid,'******************************************************',path
         
             if not (len(path)-1):
