@@ -60,10 +60,13 @@ class ProjectController(app_manager.RyuApp):
             command=ofproto.OFPFC_ADD, idle_timeout=0, hard_timeout=0, priority=0, instructions=inst)
         datapath.send_msg(mod)
         print "switch_features_handler is over"
+        
+    def get_switches(self):
+        return self.switches
     
     def creat_port_table(self,links,node_num):
-        self.toponet = (np.ones(node_num, dtype=np.int16) - np.eye(node_num, dtype=np.int16)) * 100
-        self.port_map = np.zeros([node_num,node_num,2],dtype=int16)
+        self.toponet = (np.ones(node_num, dtype=np.int) - np.eye(node_num, dtype=np.int)) * 100
+        self.port_map = np.zeros([node_num,node_num,2],dtype=int)
         for link in links:
             src = link.src
             dst = link.dst
@@ -74,7 +77,7 @@ class ProjectController(app_manager.RyuApp):
             self.port_map[src_i][dst_i] = ports
                 
     def creat_access_table(self,node_num):
-        access_point = self.switch_es[self.host_pos[i] for i in range(3)]
+        access_point = self.switch_es[2::2]
         i = 0
         for point in access_point:
             i = i + 1
