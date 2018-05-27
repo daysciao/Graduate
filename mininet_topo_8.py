@@ -19,7 +19,6 @@ class MyTopo(Topo):
         node_num = 8
         
         hostConfig = {'cpu':1}
-        linkConfig = {'bw':10,'delay':'10ms','loss':0,'max_queue_size':None}
         
         # add hosts
         h1 = self.addHost('h1',**hostConfig)
@@ -28,17 +27,17 @@ class MyTopo(Topo):
         
         # add switchs
         for i in range(node_num):
-            sw = self.addSwitch( 's{}'.format( i ) )
+            sw = self.addSwitch( 's{}'.format( i+1 ) )
             s.append(sw)
             
         # add links
         
-        self.addLink(h1,s[2],**linkConfig)
-        self.addLink(h2,s[4],**linkConfig)
-        self.addLink(h2,s[6],**linkConfig)
+        self.addLink(h1,s[2])
+        self.addLink(h2,s[4])
+        self.addLink(h2,s[6])
         
         for v,w in edges:
-            self.addLink(s[v],s[w],**linkConfig)
+            self.addLink(s[v],s[w])
         
 
 topos = { 'mytopo': ( lambda: MyTopo() ) }

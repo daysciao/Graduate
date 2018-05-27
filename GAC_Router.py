@@ -181,7 +181,7 @@ class ProjectController(app_manager.RyuApp):
             self.arp_answer(datapath,arp_pkt,eth_pkt,in_port)
             return None
             
-        if eth_pkt.ethertype == 2048:
+        elif eth_pkt.ethertype == 2048:
             
             dst = eth_pkt.dst
             src = eth_pkt.src
@@ -194,8 +194,10 @@ class ProjectController(app_manager.RyuApp):
         
             path = GA_routing(self.toponet,src_i,dst_i)
             self.install_flow(path,in_port,dst,ip_dst)
+            path_back = path[::-1]
+            self.install_flow(path_back,1,src,ip_src)
         
-            if (len(path)-1):
+            if not (len(path)-1):
                 out_port = self.access[ip_dst][1]
             else:
                 out_port = self.port_map[path[0]][path[1]][0]

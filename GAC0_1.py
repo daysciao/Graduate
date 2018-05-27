@@ -44,4 +44,4 @@ def GAC_routing(toponet, src, dst):
     GA_route = ga.route(GA_GENERATIONS)
     gac_system = Ant(net=toponet, node_num=NODE_NUM, ant_num=ANT_NUM, p_max=PHEROMONE_MAX, p_min=PHEROMONE_MIN, route_source=src, route_destination=dst, Rho = RHO)
     gac_system.adapter(GA_route)
-    return ant_system.route(AC_GENERATIONS)
+    return gac_system.route(AC_GENERATIONS)
