@@ -29,14 +29,14 @@ class MyTopo(Topo):
         
         # add switchs
         for i in range(node_num):
-            sw = self.addSwitch( 's{}'.format( i ) )
+            sw = self.addSwitch( 's{}'.format( i+1 ) )
             s.append(sw)
             
         # add links
         
         self.addLink(h1,s[2],**linkConfig)
         self.addLink(h2,s[4],**linkConfig)
-        self.addLink(h3,s[7],**linkConfig)
+        self.addLink(h3,s[6],**linkConfig)
         
         for v,w in edges:
             self.addLink(s[v],s[w],**linkConfig)
