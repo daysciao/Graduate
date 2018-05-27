@@ -109,8 +109,8 @@ class ProjectController(app_manager.RyuApp):
             command=ofproto.OFPFC_ADD, idle_timeout=0, hard_timeout=0,
             priority=ofproto.OFP_DEFAULT_PRIORITY, instructions=inst)
         datapath.send_msg(mod)
-        
-    def arp_answer(self,datapath,arp_pkt,eth_pkt,in_port):
+'''        
+    def arp_answer(self,datapath,arp_pkt,eth_pkt,in_port): 
         '''hwtype = arp_pkt.hwtype
         proto = arp_pkt.proto
         hlen = arp_pkt.hlen
@@ -146,6 +146,7 @@ class ProjectController(app_manager.RyuApp):
             datapath.send_msg(out)
             return True
         return False
+'''
         
     def install_flow(self,path,in_port,dst,ip_dst):
         for i in range(len(path)-1):
@@ -174,11 +175,7 @@ class ProjectController(app_manager.RyuApp):
         arp_pkt = pkt.get_protocol(arp.arp)
         in_port = msg.match['in_port']
         
-        if arp_pkt:
-            self.arp_answer(datapath,arp_pkt,eth_pkt,in_port)
-            return None
-            
-        elif eth_pkt.ethertype == 2048:
+        if eth_pkt.ethertype == 2048:
             
             dst = eth_pkt.dst
             src = eth_pkt.src
@@ -191,7 +188,7 @@ class ProjectController(app_manager.RyuApp):
         
             path = GA_routing(self.toponet,src_i,dst_i)
             self.install_flow(path,in_port,dst,ip_dst)
-            print '******************************************************',path
+            print dpid,'******************************************************',path
             path_back = path[::-1]
             self.install_flow(path_back,1,src,ip_src)
         
