@@ -170,11 +170,8 @@ class ProjectController(app_manager.RyuApp):
         parser = datapath.ofproto_parser
         pkt = packet.Packet(msg.data)
         eth_pkt = pkt.get_protocol(ethernet.ethernet)
-        print eth_pkt
         ip_pkt = pkt.get_protocol(ipv4.ipv4)
-        print ip_pkt
         arp_pkt = pkt.get_protocol(arp.arp)
-        print arp_pkt
         in_port = msg.match['in_port']
         
         if arp_pkt:
@@ -194,6 +191,7 @@ class ProjectController(app_manager.RyuApp):
         
             path = GA_routing(self.toponet,src_i,dst_i)
             self.install_flow(path,in_port,dst,ip_dst)
+            print '******************************************************',path
             path_back = path[::-1]
             self.install_flow(path_back,1,src,ip_src)
         
