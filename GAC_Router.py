@@ -109,9 +109,51 @@ class ProjectController(app_manager.RyuApp):
             command=ofproto.OFPFC_ADD, idle_timeout=0, hard_timeout=0,
             priority=1, instructions=inst)
         datapath.send_msg(mod)
+<<<<<<< HEAD
         print datapath,'added',mod
         
     def install_flow(self,path,in_port,dst,src,ip_dst):
+=======
+        
+    def arp_answer(self,datapath,arp_pkt,eth_pkt,in_port):
+        '''hwtype = arp_pkt.hwtype
+        proto = arp_pkt.proto
+        hlen = arp_pkt.hlen
+        plen = arp_pkt.plen'''
+        opcode = arp_pkt.opcode
+        arp_src_ip = arp_pkt.src_ip
+        arp_dst_ip = arp_pkt.dst_ip
+        actions = []
+        
+        if opcode == arp.ARP_REQUEST:
+            if arp_dst_ip in self.ARP_table.keys():
+                actions.append(datapath.ofproto_parser.OFPActionOutput(in_port))
+
+            ARP_Reply = packet.Packet()
+            ARP_Reply.add_protocol(ethernet.ethernet(
+                ethertype=eth_pkt.ethertype,
+                dst=eth_pkt.src,
+                src=self.ARP_table[arp_dst_ip]))
+            ARP_Reply.add_protocol(arp.arp(
+                opcode=arp.ARP_REPLY,
+                src_mac=self.ARP_table[arp_dst_ip],
+                src_ip=arp_dst_ip,
+                dst_mac=eth_pkt.src,
+                dst_ip=arp_src_ip))
+
+            ARP_Reply.serialize()
+
+            out = datapath.ofproto_parser.OFPPacketOut(
+                datapath=datapath,
+                buffer_id=datapath.ofproto.OFP_NO_BUFFER,
+                in_port=datapath.ofproto.OFPP_CONTROLLER,
+                actions=actions, data=ARP_Reply.data)
+            datapath.send_msg(out)
+            return True
+        return False
+        
+    def install_flow(self,path,in_port,dst,ip_dst):
+>>>>>>> parent of 2bfa816... ？？？
         for i in range(len(path)-1):
             datapath = self.dps[path[i]]
             ports = self.port_map[path[i]][path[i+1]]
@@ -141,7 +183,11 @@ class ProjectController(app_manager.RyuApp):
         arp_pkt = pkt.get_protocol(arp.arp)
         in_port = msg.match['in_port']
         
-        if eth_pkt.ethertype == 2048:
+        if arp_pkt:
+            self.arp_answer(datapath,arp_pkt,eth_pkt,in_port)
+            return None
+            
+        elif eth_pkt.ethertype == 2048:
             
             dst = eth_pkt.dst
             src = eth_pkt.src
@@ -153,8 +199,15 @@ class ProjectController(app_manager.RyuApp):
             dst_i = self.switch_es.index(self.access[ip_dst][0])
         
             path = GA_routing(self.toponet,src_i,dst_i)
+<<<<<<< HEAD
             self.install_flow(path,in_port,dst,src,ip_dst)
             print dpid,'******************************************************',path
+=======
+            self.install_flow(path,in_port,dst,ip_dst)
+            print '******************************************************',path
+            path_back = path[::-1]
+            self.install_flow(path_back,1,src,ip_src)
+>>>>>>> parent of 2bfa816... ？？？
         
             if not (len(path)-1):
                 out_port = self.access[ip_dst][1]
