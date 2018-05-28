@@ -25,8 +25,6 @@ class GA(object):
         jump = self.DNA_size + 1
         for i, route in enumerate(routes):
             for k in range(jump):
-                #if self.net[route[k]][route[k+1]] == 100:
-                #    fitness[i] += 2000
                 fitness[i] += self.net[route[k]][route[k+1]]
         return fitness
     

@@ -8,9 +8,9 @@ from AC_F import Ant
 
 def GA_routing(toponet, src, dst):
     NODE_NUM = toponet.shape[0]
-    CROSS_RATE = 0.4
-    MUTATE_RATE = 0.1
-    POP_SIZE = 6 * NODE_NUM
+    CROSS_RATE = 0.8
+    MUTATE_RATE = 0.01
+    POP_SIZE = 10 * NODE_NUM
     GA_GENERATIONS = NODE_NUM * (NODE_NUM-1) /2
     DNA_size = NODE_NUM - 2
     ga = GA(net=toponet,DNA_size=DNA_size, cross_rate=CROSS_RATE, mutation_rate=MUTATE_RATE, pop_size=POP_SIZE, route_source=src, route_destination=dst)
@@ -18,7 +18,7 @@ def GA_routing(toponet, src, dst):
 
 def AC_routing(toponet, src, dst):
     NODE_NUM = toponet.shape[0]
-    ANT_NUM = 4 * NODE_NUM #蚂蚁个数  
+    ANT_NUM = 6 * NODE_NUM #蚂蚁个数  
     PHEROMONE_MAX = 0.9
     PHEROMONE_MIN = 0.1
     RHO = 0.9   #信息素的挥发速度
@@ -28,13 +28,13 @@ def AC_routing(toponet, src, dst):
 
 def GAC_routing(toponet, src, dst):
     NODE_NUM = toponet.shape[0]
-    CROSS_RATE = 0.4
-    MUTATE_RATE = 0.1
-    POP_SIZE = 6 * NODE_NUM
-    GA_GENERATIONS = NODE_NUM * (NODE_NUM-1) / 8
+    CROSS_RATE = 0.8
+    MUTATE_RATE = 0.01
+    POP_SIZE = 10 * NODE_NUM
+    GA_GENERATIONS = NODE_NUM * (NODE_NUM-1) * 0.1875
     DNA_size = NODE_NUM - 2
     
-    ANT_NUM = 4 * NODE_NUM #蚂蚁个数  
+    ANT_NUM = 6 * NODE_NUM #蚂蚁个数  
     PHEROMONE_MAX = 0.9
     PHEROMONE_MIN = 0.1
     RHO = 0.9   #信息素的挥发速度
