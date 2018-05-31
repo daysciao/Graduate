@@ -1,5 +1,6 @@
 # coding:utf-8
 
+import time
 from ryu.base import app_manager
 from ryu.controller import mac_to_port
 from ryu.controller import ofp_event
@@ -27,14 +28,10 @@ class ProjectController(app_manager.RyuApp):
     def __init__(self, *args, **kwargs):
         super(ProjectController, self).__init__(*args, **kwargs)
         self.topology_api_app = self
-        self.ARP_table = {'10.0.0.1':'00:00:00:00:00:01',
-                          '10.0.0.2':'00:00:00:00:00:02',
-                          '10.0.0.3':'00:00:00:00:00:03'}
         self.switch_es = []
         self.port_map = None
         self.toponet = None
         self.access = {}
-        self.host_pos = {8:[1,3,5]}
         
         self.discover_thread = hub.spawn(self._discover)
     def _discover(self):
@@ -147,9 +144,13 @@ class ProjectController(app_manager.RyuApp):
         
             src_i = self.switch_es.index(self.access[ip_src][0])
             dst_i = self.switch_es.index(self.access[ip_dst][0])
-        
+            
+            s = time.clock()
             path = GA_routing(self.toponet,src_i,dst_i)
-            print dpid,'************************************',path
+            e = time.clock()
+            
+            print path,'----------------------',e-s
+            
             self.install_flow(self,path,in_port,dst,ip_dst):
 
         
@@ -164,5 +165,5 @@ class ProjectController(app_manager.RyuApp):
             out = datapath.ofproto_parser.OFPPacketOut(
             datapath=datapath, buffer_id=msg.buffer_id, in_port=in_port,
             actions=actions)
-            datapath.send_msg(out)
+            #datapath.send_msg(out)
             print 'packet_______________complete'

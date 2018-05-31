@@ -38,7 +38,7 @@ def GAC_routing(toponet, src, dst):
     PHEROMONE_MAX = 0.9
     PHEROMONE_MIN = 0.1
     RHO = 0.9   #信息素的挥发速度
-    AC_GENERATIONS = NODE_NUM
+    AC_GENERATIONS = NODE_NUM/2
     
     ga = GA(net=toponet,DNA_size=DNA_size, cross_rate=CROSS_RATE, mutation_rate=MUTATE_RATE, pop_size=POP_SIZE, route_source=src, route_destination=dst)
     GA_route = ga.route(GA_GENERATIONS)
