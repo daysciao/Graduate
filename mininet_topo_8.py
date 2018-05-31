@@ -18,6 +18,7 @@ class MyTopo(Topo):
         node_num = 8
         
         hostConfig = {'cpu':1}
+        linkConfig = {'bw':10, 'delay':'1ms'}
         
         # add hosts
         h1 = self.addHost('h1',**hostConfig)
@@ -34,7 +35,7 @@ class MyTopo(Topo):
         self.addLink(h2,s[4])
         
         for v,w in edges:
-            self.addLink(s[v],s[w])
+            self.addLink(s[v],s[w],**linkConfig)
         
 
 topos = { 'mytopo': ( lambda: MyTopo() ) }

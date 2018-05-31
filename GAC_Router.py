@@ -74,7 +74,7 @@ class ProjectController(app_manager.RyuApp):
             self.port_map[src_i][dst_i] = ports
                 
     def creat_access_table(self,node_num):
-        access_point = self.switch_es[2::2]
+        access_point = self.switch_es[::node_num/2]
         i = 0
         for point in access_point:
             i = i + 1
@@ -106,20 +106,24 @@ class ProjectController(app_manager.RyuApp):
             command=ofproto.OFPFC_ADD, idle_timeout=0, hard_timeout=0,
             priority=1, instructions=inst)
         datapath.send_msg(mod)
-        print datapath.id,'added',mod
+        #print datapath.id,'added',mod
 
-    def install_flow(self,path,in_port,dst,ip_dst):
+    def install_flow(self,path,in_port,dst,src):
         for i in range(len(path)-1):
             datapath = self.dps[path[i]]
             ports = self.port_map[path[i]][path[i+1]]
             out_port = ports[0]
             actions = [datapath.ofproto_parser.OFPActionOutput(out_port)]
             self.add_flow(datapath, in_port, dst, actions)
+            actions = [datapath.ofproto_parser.OFPActionOutput(in_port)]
+            self.add_flow(datapath, out_port, src, actions)
             in_port = ports[1]
         datapath = self.dps[path[-1]]
         out_port = 1
         actions = [datapath.ofproto_parser.OFPActionOutput(out_port)]
         self.add_flow(datapath, in_port, dst, actions)
+        actions = [datapath.ofproto_parser.OFPActionOutput(in_port)]
+        self.add_flow(datapath, out_port, src, actions)
         
     @set_ev_cls(ofp_event.EventOFPPacketIn, MAIN_DISPATCHER)
     def _packet_in_handler(self, ev):
@@ -149,9 +153,9 @@ class ProjectController(app_manager.RyuApp):
             path = GA_routing(self.toponet,src_i,dst_i)
             e = time.clock()
             
-            print path,'----------------------',e-s
+            #print path,'----------------------',e-s
             
-            self.install_flow(self,path,in_port,dst,ip_dst):
+            self.install_flow(path,in_port,dst,src)
 
         
             if not (len(path)-1):
@@ -166,4 +170,4 @@ class ProjectController(app_manager.RyuApp):
             datapath=datapath, buffer_id=msg.buffer_id, in_port=in_port,
             actions=actions)
             #datapath.send_msg(out)
-            print 'packet_______________complete'
+            #print 'packet_______________complete'
